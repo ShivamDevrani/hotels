@@ -5,6 +5,9 @@ const app = express();
 //importing the database
 const db=require('./db');
 
+// importing dot evn for sensitive information
+
+require('dotenv').config();
 
 const menu=require('./models/menu');
 
@@ -26,6 +29,6 @@ app.get('/', function (req, res) {
   res.send('Hello,How can i help you');
 })
 
-
-// will be in 4000 port address
-app.listen(4000,()=>console.log("server is live"));
+const PORT=process.env.PORT||4000;
+// will be in x port address
+app.listen(PORT,()=>console.log("server is live"));
