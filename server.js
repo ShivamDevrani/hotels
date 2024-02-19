@@ -27,5 +27,5 @@ app.get('/', function (req, res) {
 })
 
 
-
+// will be in 4000 port address
 app.listen(4000,()=>console.log("server is live"));
