@@ -9,11 +9,18 @@ const db=require('./db');
 
 require('dotenv').config();
 
-const menu=require('./models/menu');
 
 //import the body parser middleware
 const bodyParser=require('body-parser');
 app.use(bodyParser.json());    // this data will be in req.body
+
+//middleware functions
+const logRequest=(req,res,next)=>{
+  console.log(`${new Date().toLocaleString()} Request made to:${req.url}`);
+  next();
+}
+//so whenever someone hits the api then date with time will show;
+app.use(logRequest);
 
 
 //import the personRouter files
