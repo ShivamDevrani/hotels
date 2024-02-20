@@ -3,7 +3,7 @@ const express=require('express');
 const router=express.Router();
 
 const Person=require('../models/Person');
-const { trusted } = require('mongoose');
+
 
 router.post('/',async (req,res)=>{
     try{
@@ -42,6 +42,7 @@ router.get('/',async (req,res)=>{
  }
 
 })
+
 
 //parameterised method for get
 router.get('/:workType',async (req,res)=>{
