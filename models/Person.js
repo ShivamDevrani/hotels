@@ -75,13 +75,12 @@ personSchema.pre('save',async function(next){
 
     }catch(err)
     {
-       return   next(err);
+       return  next(err);
     }
 })
 
 //making function inside personschema
 personSchema.methods.comparePassword=async function(candidatePassword){
-    
     try{
           const ismatch=await bcrypt.compare(candidatePassword,this.password);
           return ismatch;

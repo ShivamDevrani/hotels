@@ -2,10 +2,14 @@ const express=require('express');
 
 const router=express.Router();
 
+
 const Person=require('../models/Person');
 
+const {jwtAuthMiddleware,jwtTokengenerator}=require('../jwt');
+const { generateToken } = require('../jwt');
 
-router.post('/',async (req,res)=>{
+//routes for sign in
+router.post('/signup',async (req,res)=>{
     try{
      const data=req.body;
      
@@ -15,7 +19,17 @@ router.post('/',async (req,res)=>{
 
      console.log("saved successfully");
 
-     res.status(200).json(response);
+     //generate function needs payload -->which contains information regarding user ,it can be email,userId
+     const payload={
+        id:response.id,
+        username:response.username,
+        email:response.email
+     }
+     const token=generateToken(payload);
+
+     console.log(token);
+
+     res.status(200).json({response:response,token:token});
 
     }
     catch(err){
@@ -23,11 +37,66 @@ router.post('/',async (req,res)=>{
        res.status(500).json({error:'internal server error'});
     }
 
+ })
+
+
+ //routes for login
+ router.post('/login',async(req,res)=>{
+    
+    //extracting the user details from request
+    const {username,password}=req.body;
+    
+    try{
+       //finding the user by username
+       const user=await Person.findOne({username:username});
+       
+       if(!user)
+        return res.status(401).json({error:'wrong username'});
+
+        const iscompare=await user.comparePassword(password);
+         
+        if(!iscompare)
+        return res.status(401).json({error:"wrong password"});
+
+        const payload={
+            id:user.id,
+            username:user.username,
+            email:user.email
+           }
+        
+        const token= generateToken(payload);
+
+        console.log("token:",token);
+
+        res.status(200).json({token:token});
+
+
+    }
+    catch(error){
+       console.log(error);
+       res.status(500).json({error:error});
+    }
 
  })
 
-//get method to get the person
-router.get('/',async (req,res)=>{
+//profile routes
+
+router.get('/profile',jwtAuthMiddleware,async(req,res)=>{
+    userData=req.user;
+    try{
+        const user= await Person.findById(userData.id);
+        res.status(200).json({user});
+
+    }
+    catch(error){
+        console.log(error);
+        res.json({error:error});
+
+    }
+})
+
+//get method to get the persons
+router.get('/',jwtAuthMiddleware,async (req,res)=>{
 
  try{
     
